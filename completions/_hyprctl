@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+_hyprctl() {
+    local cur=${COMP_WORDS[COMP_CWORD]}
+    local help_message="$(hyprctl --help)"
+    local commands="$(echo "$help_message" | grep -oP '^\s+\K\w+' | paste -s -d ' ')"
+    local flags="$(echo "$help_message" | grep -oP '^\s+(-[a-zA-Z0-9-]+)' | paste -s -d ' ')"
+    COMPREPLY=()
+
+    case "${COMP_CWORD}" in
+        1)
+            COMPREPLY=( $(compgen -W "$commands $flags" -- $cur) )
+            ;;
+        2)
+            COMPREPLY=( $(compgen -W "$flags" -- $cur) )
+            ;;
+    esac
+}
+
+complete -F _hyprctl hyprctl

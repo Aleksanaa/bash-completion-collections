@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+_Hyprland() {
+	local cur=${COMP_WORDS[COMP_CWORD]}
+	local help_message="$(Hyprland --help)"
+	local commands="$(echo "$help_message" | grep -oE -- "--?[[:alnum:]-]+" | tr '\n' ' ')"
+	local commands_with_file="$(echo "$help_message" | grep -oE -- "--?[[:alnum:]-]+[[:space:]]+FILE" | tr -d 'FILE'| tr '\n' ' ')"
+	COMPREPLY=()
+
+	if [[ ${COMP_CWORD} == 1  ]] || [[ " $commands_with_file " != *" ${COMP_WORDS[COMP_CWORD-1]} "* ]]; then
+		COMPREPLY=( $(compgen -W "$commands" -- $cur) )
+	else
+		COMPREPLY=( $(compgen -f -- $cur) )
+	fi
+}
+
+complete -F _Hyprland Hyprland
